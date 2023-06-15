@@ -100,13 +100,7 @@ for category, sites in result.items():
             serviceAreas.append({"City": city_name, "Population": population})
         # Checks if nothing was returned and then grabs the location from the table link
         if len(serviceAreas) == 0:
-            for divElement in browser.find_elements(By.CSS_SELECTOR, "div.city-data__city-population"):
-                city_name = divElement.text.split("\n")[0].strip()
-                population = ""
-                h4_element = divElement.find_elements(By.TAG_NAME, "h4")
-                if len(h4_element) > 0:
-                    population = h4_element[0].text.strip()
-                serviceAreas.append({"City": city_name, "Population": population})
+            serviceAreas.append("None")
 
         # Extract the name match from the title tag
         nameResult = browser.find_element(By.TAG_NAME, "title").get_attribute("textContent").split(" : ")[0].strip()
@@ -126,25 +120,11 @@ for category, sites in result.items():
 # Close the browser
 browser.quit()
 
-# Printing the result (mainly to check if everything is right)
-for category, nested_dict in nested_result.items():
-    print(category)
-    for site, values in nested_dict.items():
-        print(f"Site: {site}")
-        print(f"Name Match: {values['Name Match']}")
-        print(f"Cost Match: {values['Cost Match']}")
-        print(f"Internet Speed: {values['Internet Speed']}")
-        print("Service Areas:")
-        for area in values['Service Areas']:
-            print(f"- City: {area['City']}, Population: {area['Population']}")
-        print()
-    print("Number of Sites:", len(nested_dict))
-    print()
 
 # Creates the CSV file
 with open("searchWordCount.csv", "w", newline="") as searchWordCount:
-    writer = csv.writer(searchWordCount)
-    writer.writerow(["Site", "Name Match", "Cost Match", "Internet Speed", "City", "Population", "Type"])
+    writer = csv.writer(searchWordCount, delimiter=' ')
+    writer.writerow(["Site ", "Name Match ", "Cost Match ", "Internet Speed ", "City or Stat ", "Population ", "Type"])
     for category, nested_dict in nested_result.items():
         for site, values in nested_dict.items():
             writer.writerow([site, values['Name Match'], values['Cost Match'], values['Internet Speed'],
